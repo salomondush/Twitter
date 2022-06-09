@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginBottom="0.5dp"
-    android:clickable="true"
+    android:layout_marginTop="?android:attr/actionBarSize"
     android:padding="5dp"
-    android:background="@color/black"
-    android:focusable="true">
+    android:background="@color/black">
 
     <ImageView
         android:id="@+id/ivProfileImage"
@@ -66,9 +65,4 @@
         android:textColor="@color/medium_gray"
         android:text="TextView"
         tools:text="time" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/medium_gray" />
 </RelativeLayout>

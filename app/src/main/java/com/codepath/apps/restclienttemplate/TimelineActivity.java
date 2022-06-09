@@ -68,6 +68,28 @@ public class TimelineActivity extends AppCompatActivity {
         // init the list of tweets and adapter
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
+
+
+        adapter.setOnItemClickListener(new TweetsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                // make sure the position is valid, i.e. actually exists in the view
+                if (position != RecyclerView.NO_POSITION) {
+                    // get the movie at the position, this won't work if the class is static
+                    Tweet tweet = tweets.get(position);
+                    // create intent for the new activity
+                    Intent intent = new Intent(TimelineActivity.this, TweetDetailsActivity.class);
+                    // serialize the movie using parceler, use its short name as a key
+                    intent.putExtra(TweetsAdapter.TWEET, Parcels.wrap(tweet));
+                    // show the activity
+                    startActivity(intent);
+                }
+            }
+
+        });
+
+
+
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
