@@ -28,6 +28,8 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String mediaUrl;
+    public String tweetId;
+    public boolean liked;
 
     // empty constructor needed by the Parceler library
     public Tweet() {}
@@ -41,6 +43,8 @@ public class Tweet {
         }
         tweet.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.tweetId = jsonObject.getString("id");
+        tweet.liked = jsonObject.getBoolean("favorited");
 
         tweet.mediaUrl = "";
         if (jsonObject.getJSONObject("entities").has("media")){
