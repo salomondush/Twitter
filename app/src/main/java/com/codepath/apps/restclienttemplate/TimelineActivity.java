@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -38,7 +39,7 @@ public class TimelineActivity extends AppCompatActivity {
     public static final int INCREMENT = 1;
     private final int REQUEST_CODE = 20;
 
-    TwitterClient client;
+    TwitterClient client; // fixme: make these private
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
@@ -54,9 +55,6 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
-            // Your code to refresh the list here.
-            // Make sure you call swipeContainer.setRefreshing(false)
-            // once the network request has completed successfully.
             fetchTimelineAsync(0);
         });
         // Configure the refreshing colors

@@ -56,7 +56,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/created_at"
+        android:id="@+id/createdAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/tvBody"
@@ -81,7 +81,7 @@
         android:layout_below="@+id/ivImage"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/likes_count"
+        android:layout_toStartOf="@+id/likesCount"
         android:background="@drawable/button_favorite"
         android:checked="false"
         android:text=""
@@ -103,7 +103,7 @@
         android:textOn="" />
 
     <TextView
-        android:id="@+id/retweets_count"
+        android:id="@+id/retweetsCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ivImage"
@@ -115,7 +115,7 @@
         android:textSize="10sp" />
 
     <TextView
-        android:id="@+id/likes_count"
+        android:id="@+id/likesCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ivImage"

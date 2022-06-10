@@ -1,13 +1,10 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -16,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
-import org.parceler.Parcels;
-
-import java.net.ContentHandler;
 import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
@@ -29,11 +24,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     private Context context;
     private List<Tweet> tweets;
+    private ItemTweetBinding binding;
 
     // Define listener member variable
     private OnItemClickListener listener;
     private OnItemClickListener toggleListener;
     private OnItemClickListener retweetToggleListener;
+
 
 
     // Define the listener interface
@@ -68,11 +65,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @NonNull
     @Override
     public TweetsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_tweet, parent, false);
-
+        binding = ItemTweetBinding.inflate(LayoutInflater.from(context));
         // return a new holder instance
-        TweetsAdapter.ViewHolder viewHolder = new TweetsAdapter.ViewHolder(view, listener);
-        return viewHolder;
+        return new TweetsAdapter.ViewHolder(binding.getRoot(), listener);
     }
 
     // Bind values based on the position of the element
@@ -109,15 +104,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener)  {
             super(itemView);
-            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            ivImage = itemView.findViewById(R.id.ivImage);
-            tvBody = itemView.findViewById(R.id.tvBody);
-            tvScreenName = itemView.findViewById(R.id.tvScreenName);
-            created_at = itemView.findViewById(R.id.created_at);
-            likeCount = itemView.findViewById(R.id.likes_count);
-            likedBtn = itemView.findViewById(R.id.likeBtn);
-            retweetCount = itemView.findViewById(R.id.retweets_count);
-            retweetBtn = itemView.findViewById(R.id.retweetBtn);
+            ivProfileImage = binding.ivProfileImage;
+            ivImage = binding.ivImage;
+            tvBody = binding.tvBody;
+            tvScreenName = binding.tvScreenName;
+
+            created_at = binding.createdAt;
+            likeCount = binding.likesCount;
+
+            likedBtn = binding.likeBtn;
+            retweetCount = binding.retweetsCount;
+            retweetBtn = binding.retweetBtn;
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

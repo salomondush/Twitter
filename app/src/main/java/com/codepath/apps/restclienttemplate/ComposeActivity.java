@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityComposeBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -23,16 +24,17 @@ public class ComposeActivity extends AppCompatActivity {
     public static final int MAX_TWEET_LENGTH = 280;
     private EditText etCompose;
     private TwitterClient client;
+    private ActivityComposeBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_compose);
+        binding = ActivityComposeBinding.inflate(getLayoutInflater());
 
         client = TwitterApp.getRestClient(this);
 
-        etCompose = findViewById(R.id.etCompose);
-        Button btnTweet = findViewById(R.id.btnTweet);
+        etCompose = binding.etCompose;
+        Button btnTweet = binding.btnTweet;
 
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
