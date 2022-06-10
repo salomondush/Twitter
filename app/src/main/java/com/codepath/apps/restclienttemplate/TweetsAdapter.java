@@ -16,6 +16,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
@@ -101,6 +103,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         private ToggleButton likedBtn;
         private TextView retweetCount;
         private ToggleButton retweetBtn;
+        private ImageView isVerified;
+        private TextView userName;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener)  {
             super(itemView);
@@ -115,6 +119,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             likedBtn = binding.likeBtn;
             retweetCount = binding.retweetsCount;
             retweetBtn = binding.retweetBtn;
+            isVerified = binding.isVerified;
+            userName = binding.userName;
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,6 +153,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             likedBtn.setChecked(tweet.isLiked());
             retweetCount.setText(tweet.getRetweetCount());
             retweetBtn.setChecked(tweet.isRetweeted());
+            isVerified.setVisibility(tweet.getUser().isVerified() ? View.VISIBLE : View.GONE);
+            userName.setText(tweet.getUser().getUserName());
 
             Glide.with(context).load(tweet.getUser().getProfileImageUrl()).
                     transform(new RoundedCorners(PROFILE_RADIUS)).into(ivProfileImage);

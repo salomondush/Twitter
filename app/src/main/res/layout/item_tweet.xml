@@ -16,6 +16,7 @@
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
+
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -56,17 +57,40 @@
         android:layout_marginEnd="0dp"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <ImageView
+        android:id="@+id/isVerified"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_above="@+id/tvBody"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_toEndOf="@+id/tvScreenName"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_vector_verified" />
+
     <TextView
         android:id="@+id/createdAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/tvBody"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="1dp"
-        android:layout_toEndOf="@+id/tvScreenName"
+        android:layout_marginStart="9dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/userName"
         android:text="TextView"
         android:textColor="@color/medium_gray"
         tools:text="time" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvBody"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/isVerified"
+        android:text="TextView"
+        android:textColor="@color/medium_gray"
+        tools:text="username" />
 
     <View
         android:layout_width="match_parent"

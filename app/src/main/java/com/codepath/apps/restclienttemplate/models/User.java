@@ -8,24 +8,30 @@ import org.parceler.Parcel;
 
 @Parcel
 public class User {
-
-    public String name;
-    public String screenName;
-    public String profileImageUrl;
+    private final static String AT = "@";
+    private String userName;
+    private String screenName;
+    private String profileImageUrl;
+    private boolean isVerified;
 
     // empty constructor needed by the Parceler library
     public User() {}
 
     public static User fromJson(JSONObject jsonObject) throws JSONException {
         User user = new User();
-        user.name = jsonObject.getString("name");
-        user.screenName = jsonObject.getString("screen_name");
+        user.screenName = jsonObject.getString("name");
+        user.userName = AT + jsonObject.getString("screen_name");
         user.profileImageUrl = jsonObject.getString("profile_image_url_https");
+        user.isVerified = jsonObject.getBoolean("verified");
         return user;
     }
 
-    public String getName() {
-        return name;
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getScreenName() {
