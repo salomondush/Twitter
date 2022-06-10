@@ -25,6 +25,9 @@ import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     public static final String TWEET = "TWEET";
+    public static final int PROFILE_RADIUS = 80;
+    public static final int BODY_IMAGE_RADIUS = 60;
+
     Context context;
     List<Tweet> tweets;
 
@@ -154,8 +157,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             retweetCount.setText(tweet.getRetweetCount());
             retweetBtn.setChecked(tweet.isRetweeted());
 
-            int radius = 80; // fixme: avoid using string literals
-            Glide.with(context).load(tweet.getUser().getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
+            Glide.with(context).load(tweet.getUser().getProfileImageUrl()).
+                    transform(new RoundedCorners(PROFILE_RADIUS)).into(ivProfileImage);
             Glide.with(context).load(tweet.getMediaUrl()).into(ivImage);
         }
     }

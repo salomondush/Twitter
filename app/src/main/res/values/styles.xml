@@ -11,7 +11,6 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="colorPrimary">@color/transparent_80</item>
-        <item name="windowActionBarOverlay">true</item>
         <item name="android:textColorHint">@color/white</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>

@@ -76,7 +76,7 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	public void unlikeTweet(String tweetId, JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("favorites/destroy.json");
+		String apiUrl = getApiUrl("favorites/destroy.json"); // FIXME: use one endpoint
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);

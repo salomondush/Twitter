@@ -34,6 +34,8 @@ public class Tweet {
     private boolean retweeted;
     public String retweetCount;
 
+    private int imageHeight;
+
     // empty constructor needed by the Parceler library
     public Tweet() {}
 
@@ -54,10 +56,14 @@ public class Tweet {
         tweet.retweetCount = jsonObject.getString("retweet_count");
 
         tweet.mediaUrl = "";
+        tweet.imageHeight = 0;
         if (jsonObject.getJSONObject("entities").has("media")){
                 JSONArray media = jsonObject.getJSONObject("entities").getJSONArray("media");
                 if (media.length() > 0) {
                     tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");
+//                    tweet.imageHeight = Integer.parseInt(
+//                            media.getJSONObject(0).getJSONObject("sizes")
+//                                    .getJSONObject("thumb").getString("h"));
                 }
         }
 
