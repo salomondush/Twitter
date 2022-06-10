@@ -77,7 +77,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_below="@+id/ivImage"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/likes_count"
         android:background="@drawable/button_favorite"
@@ -86,14 +86,40 @@
         android:textOff=""
         android:textOn="" />
 
+    <ToggleButton
+        android:id="@+id/retweetBtn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:background="@drawable/button_retweet"
+        android:checked="false"
+        android:text=""
+        android:textOff=""
+        android:textOn="" />
+
+    <TextView
+        android:id="@+id/retweets_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@+id/retweetBtn"
+        android:text="20"
+        android:textColor="@color/medium_gray"
+        android:textSize="10sp" />
+
     <TextView
         android:id="@+id/likes_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ivImage"
-        android:layout_alignEnd="@+id/ivImage"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="47dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="81dp"
         android:text="20"
         android:textColor="@color/medium_gray"
         android:textSize="10sp" />

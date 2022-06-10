@@ -31,6 +31,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     // Define listener member variable
     private OnItemClickListener listener;
     private OnItemClickListener toggleListener;
+    private OnItemClickListener retweetToggleListener;
+
 
     // Define the listener interface
     public interface OnItemClickListener {
@@ -52,6 +54,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickToggleListener(OnItemClickListener listener) {
         toggleListener = listener;
+    }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickRetweetToggleListener(OnItemClickListener listener) {
+        retweetToggleListener = listener;
     }
 
 
@@ -101,6 +108,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView created_at;
         TextView likeCount;
         ToggleButton likedBtn;
+        TextView retweetCount;
+        ToggleButton retweetBtn;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener)  {
             super(itemView);
@@ -111,6 +120,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             created_at = itemView.findViewById(R.id.created_at);
             likeCount = itemView.findViewById(R.id.likes_count);
             likedBtn = itemView.findViewById(R.id.likeBtn);
+            retweetCount = itemView.findViewById(R.id.retweets_count);
+            retweetBtn = itemView.findViewById(R.id.retweetBtn);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -125,18 +136,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     toggleListener.onItemClick(itemView, getAdapterPosition());
                 }
             });
+
+            retweetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    retweetToggleListener.onItemClick(itemView, getAdapterPosition());
+                }
+            });
         }
 
         public void bind(Tweet tweet) {
-            tvBody.setText(tweet.body);
-            created_at.setText(tweet.createdAt);
-            tvScreenName.setText(tweet.user.getScreenName());
+            tvBody.setText(tweet.getBody());
+            created_at.setText(tweet.getCreatedAt());
+            tvScreenName.setText(tweet.getUser().getScreenName());
             likeCount.setText(tweet.getLikeCount());
             likedBtn.setChecked(tweet.isLiked());
+            retweetCount.setText(tweet.getRetweetCount());
+            retweetBtn.setChecked(tweet.isRetweeted());
 
             int radius = 80; // fixme: avoid using string literals
-            Glide.with(context).load(tweet.user.getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
-            Glide.with(context).load(tweet.mediaUrl).into(ivImage);
+            Glide.with(context).load(tweet.getUser().getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
+            Glide.with(context).load(tweet.getMediaUrl()).into(ivImage);
         }
     }
 }

@@ -2,12 +2,18 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
+import com.codepath.oauth.OAuthTokenClient;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
+
+import org.json.JSONException;
+
+import okhttp3.Headers;
 
 /*
  * 
@@ -22,6 +28,7 @@ import com.github.scribejava.core.builder.api.BaseApi;
  * 
  */
 public class TwitterClient extends OAuthBaseClient {
+	public static final String TAG = "TwitterClient";
 	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
 	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
@@ -43,6 +50,12 @@ public class TwitterClient extends OAuthBaseClient {
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
+
+	@Override
+	protected OAuthTokenClient getTokenClient() {
+		return super.getTokenClient();
+	}
+
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here
 	public void getHomeTimeline(JsonHttpResponseHandler handler) {
@@ -78,6 +91,25 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, "", handler);
 	}
 
+	public void me(JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		// Can specify query string params directly or through RequestParams.
+		client.get(apiUrl, handler);
+	}
+
+
+	public void processRetweet(Boolean retweet, String tweetId,  JsonHttpResponseHandler handler) {
+		// select api based on retweet action (remove or add retweet)
+		String api = retweet? String.format("statuses/retweet/%s.json", tweetId):
+				String.format("/statuses/unretweet/%s.json", tweetId);
+
+		String apiUrl = getApiUrl(api);
+
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("tweet_id", tweetId);
+		client.post(apiUrl, params, "", handler);
+	}
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json");

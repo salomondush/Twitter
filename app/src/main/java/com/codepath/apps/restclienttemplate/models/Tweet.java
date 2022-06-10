@@ -24,13 +24,15 @@ public class Tweet {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
-    public String body;
-    public String createdAt;
-    public User user;
-    public String mediaUrl;
-    public String tweetId;
-    public boolean liked;
-    public String likeCount;
+    private String body;
+    private String createdAt;
+    private User user;
+    private String mediaUrl;
+    private String tweetId;
+    private boolean liked;
+    private String likeCount;
+    private boolean retweeted;
+    public String retweetCount;
 
     // empty constructor needed by the Parceler library
     public Tweet() {}
@@ -47,6 +49,9 @@ public class Tweet {
         tweet.tweetId = jsonObject.getString("id_str");
         tweet.liked = jsonObject.getBoolean("favorited");
         tweet.likeCount = jsonObject.getString("favorite_count");
+
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.retweetCount = jsonObject.getString("retweet_count");
 
         tweet.mediaUrl = "";
         if (jsonObject.getJSONObject("entities").has("media")){
@@ -108,9 +113,24 @@ public class Tweet {
         this.liked = liked;
     }
 
-
     public void setLikeCount(String likeCount) {
         this.likeCount = likeCount;
+    }
+
+    public void setRetweeted(boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
+    public void setRetweetCount(String retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public boolean isRetweeted() {
+        return retweeted;
+    }
+
+    public String getRetweetCount() {
+        return retweetCount;
     }
 
     public String getBody() {
