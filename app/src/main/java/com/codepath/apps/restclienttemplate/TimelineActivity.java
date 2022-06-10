@@ -15,7 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -33,6 +35,8 @@ import okhttp3.Headers;
 public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimeLineActivity";
+    public static final int RESTRICTED_COUNT = 0;
+    public static final int INCREMENT = 1;
     private final int REQUEST_CODE = 20;
 
     TwitterClient client;
@@ -48,6 +52,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
             // Your code to refresh the list here.
@@ -85,10 +90,61 @@ public class TimelineActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-
         });
 
+        adapter.setOnItemClickToggleListener(new TweetsAdapter.OnItemClickListener() {
+             @Override
+             public void onItemClick(View itemView, int position) {
+                 if (position != RecyclerView.NO_POSITION) {
 
+                     Tweet tweet = tweets.get(position);
+                     tweets.remove(position);
+
+                     int numLikes = Integer.parseInt(tweet.getLikeCount());
+                     if (tweet.isLiked()){
+                         tweet.setLiked(false);
+                         tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
+                                 numLikes-INCREMENT: --numLikes));
+                         setTweetUnliked(tweet.getTweetId());
+                     } else if (!tweet.isLiked()) {
+                         tweet.setLiked(true);
+                         tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
+                                 numLikes+INCREMENT: ++numLikes));
+                         setTweetLiked(tweet.getTweetId());
+                     }
+
+                     tweets.add(position, tweet);
+                     adapter.notifyItemChanged(position);
+                 }
+             }
+        });
+
+        adapter.setOnItemClickRetweetToggleListener(new TweetsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                if (position != RecyclerView.NO_POSITION) {
+
+                    Tweet tweet = tweets.get(position);
+                    tweets.remove(position);
+
+                    int numRetweets = Integer.parseInt(tweet.getRetweetCount());
+                    if (tweet.isRetweeted()){
+                        tweet.setRetweeted(false);
+                        tweet.setRetweetCount(String.valueOf(numRetweets == RESTRICTED_COUNT?
+                                numRetweets-INCREMENT:--numRetweets));
+                        handleRetweetAction(false, tweet.getTweetId());
+                    } else if (!tweet.isRetweeted()) {
+                        tweet.setRetweeted(true);
+                        tweet.setRetweetCount(String.valueOf(numRetweets == RESTRICTED_COUNT?
+                                numRetweets+INCREMENT:++numRetweets));
+                        handleRetweetAction(true, tweet.getTweetId());
+                    }
+
+                    tweets.add(position, tweet);
+                    adapter.notifyItemChanged(position);
+                }
+            }
+        });
 
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
@@ -167,6 +223,94 @@ public class TimelineActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
 //                Log.i(TAG, BuildConfig.CONSUMER_KEY);
                 Log.e(TAG, "onFailure"+ response, throwable);
+            }
+        });
+    }
+
+    private void setTweetLiked(String id){
+        client.likeTweet(id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Liked!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error1: " + throwable.toString());
+            }
+        });
+    }
+
+    private void setTweetUnliked(String id){
+        client.unlikeTweet(id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Unliked!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
+            }
+        });
+    }
+
+    private void setRetweeted(String id){
+        client.unlikeTweet(id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Unliked!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
+            }
+        });
+    }
+
+    private void handleRetweetAction(Boolean  retweet, String tweetId){
+        client.processRetweet(retweet, tweetId, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        retweet? "Retweeted!":"Unretweeted!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
             }
         });
     }

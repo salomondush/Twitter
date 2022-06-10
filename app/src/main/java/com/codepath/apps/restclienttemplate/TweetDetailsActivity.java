@@ -45,7 +45,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
 
         // loading the images with Glide
         int radius = 80;
-        Glide.with(this).load(tweet.user.getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
-        Glide.with(this).load(tweet.mediaUrl).into(ivImage);
+        Glide.with(this).load(tweet.getUser().getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
+        Glide.with(this).load(tweet.getMediaUrl()).into(ivImage);
     }
 }
