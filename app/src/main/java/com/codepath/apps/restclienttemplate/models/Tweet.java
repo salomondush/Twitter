@@ -30,6 +30,7 @@ public class Tweet {
     public String mediaUrl;
     public String tweetId;
     public boolean liked;
+    public String likeCount;
 
     // empty constructor needed by the Parceler library
     public Tweet() {}
@@ -43,8 +44,9 @@ public class Tweet {
         }
         tweet.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-        tweet.tweetId = jsonObject.getString("id");
+        tweet.tweetId = jsonObject.getString("id_str");
         tweet.liked = jsonObject.getBoolean("favorited");
+        tweet.likeCount = jsonObject.getString("favorite_count");
 
         tweet.mediaUrl = "";
         if (jsonObject.getJSONObject("entities").has("media")){
@@ -55,22 +57,6 @@ public class Tweet {
         }
 
         return tweet;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public String getMediaUrl() {
-        return mediaUrl;
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
@@ -116,5 +102,42 @@ public class Tweet {
             tweets.add(fromJson(jsonArray.getJSONObject(i)));
         }
         return tweets;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
+
+    public void setLikeCount(String likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public String getTweetId() {
+        return tweetId;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public String getLikeCount() {
+        return likeCount;
     }
 }

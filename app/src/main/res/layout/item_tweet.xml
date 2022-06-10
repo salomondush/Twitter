@@ -71,4 +71,30 @@
         android:layout_width="match_parent"
         android:layout_height="0.8dp"
         android:background="@color/medium_gray" />
+
+    <ToggleButton
+        android:id="@+id/likeBtn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/ivImage"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/likes_count"
+        android:background="@drawable/button_favorite"
+        android:checked="false"
+        android:text=""
+        android:textOff=""
+        android:textOn="" />
+
+    <TextView
+        android:id="@+id/likes_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivImage"
+        android:layout_alignEnd="@+id/ivImage"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="47dp"
+        android:text="20"
+        android:textColor="@color/medium_gray"
+        android:textSize="10sp" />
 </RelativeLayout>

@@ -15,7 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -48,6 +50,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
             // Your code to refresh the list here.
@@ -85,10 +88,33 @@ public class TimelineActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-
         });
 
+        adapter.setOnItemClickToggleListener(new TweetsAdapter.OnItemClickListener() {
+             @Override
+             public void onItemClick(View itemView, int position) {
+                 if (position != RecyclerView.NO_POSITION) {
 
+                     Tweet tweet = tweets.get(position);
+                     tweets.remove(position);
+
+                     if (tweet.isLiked()){
+                         tweet.setLiked(false);
+                         int likes = Integer.parseInt(tweet.getLikeCount());
+                         tweet.setLikeCount(String.valueOf(--likes));
+                         setTweetUnliked(tweet.getTweetId());
+                     } else if (!tweet.isLiked()) {
+                         tweet.setLiked(true);
+                         int likes = Integer.parseInt(tweet.getLikeCount());
+                         tweet.setLikeCount(String.valueOf(++likes));
+                         setTweetLiked(tweet.getTweetId());
+                     }
+
+                     tweets.add(position, tweet);
+                     adapter.notifyItemChanged(position);
+                 }
+             }
+        });
 
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
@@ -167,6 +193,50 @@ public class TimelineActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
 //                Log.i(TAG, BuildConfig.CONSUMER_KEY);
                 Log.e(TAG, "onFailure"+ response, throwable);
+            }
+        });
+    }
+
+    private void setTweetLiked(String id){
+        client.likeTweet(id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Liked!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error1: " + throwable.toString());
+            }
+        });
+    }
+
+    private void setTweetUnliked(String id){
+        client.unlikeTweet(id, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Unliked!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error!",
+                        Toast.LENGTH_SHORT).show();
+
+                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
             }
         });
     }

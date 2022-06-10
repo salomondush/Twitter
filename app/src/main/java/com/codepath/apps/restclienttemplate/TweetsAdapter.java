@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     // Define listener member variable
     private OnItemClickListener listener;
+    private OnItemClickListener toggleListener;
 
     // Define the listener interface
     public interface OnItemClickListener {
@@ -46,6 +48,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickToggleListener(OnItemClickListener listener) {
+        toggleListener = listener;
+    }
+
 
     // for each row, inflate the layout
     @NonNull
@@ -91,19 +99,30 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvBody;
         TextView tvScreenName;
         TextView created_at;
+        TextView likeCount;
+        ToggleButton likedBtn;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener)  {
             super(itemView);
-            this.ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            this.ivImage = itemView.findViewById(R.id.ivImage);
-            this.tvBody = itemView.findViewById(R.id.tvBody);
-            this.tvScreenName = itemView.findViewById(R.id.tvScreenName);
-            this.created_at = itemView.findViewById(R.id.created_at);
+            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
+            ivImage = itemView.findViewById(R.id.ivImage);
+            tvBody = itemView.findViewById(R.id.tvBody);
+            tvScreenName = itemView.findViewById(R.id.tvScreenName);
+            created_at = itemView.findViewById(R.id.created_at);
+            likeCount = itemView.findViewById(R.id.likes_count);
+            likedBtn = itemView.findViewById(R.id.likeBtn);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     clickListener.onItemClick(itemView, getAdapterPosition());
+                }
+            });
+
+            likedBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    toggleListener.onItemClick(itemView, getAdapterPosition());
                 }
             });
         }
@@ -112,6 +131,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.body);
             created_at.setText(tweet.createdAt);
             tvScreenName.setText(tweet.user.getScreenName());
+            likeCount.setText(tweet.getLikeCount());
+            likedBtn.setChecked(tweet.isLiked());
 
             int radius = 80; // fixme: avoid using string literals
             Glide.with(context).load(tweet.user.getProfileImageUrl()).transform(new RoundedCorners(radius)).into(ivProfileImage);
