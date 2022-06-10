@@ -28,18 +28,17 @@ import okhttp3.Headers;
  * 
  */
 public class TwitterClient extends OAuthBaseClient {
-	public static final String TAG = "TwitterClient";
-	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
-	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
-	public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
-	public static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET; // Change this inside apikey.properties
+	private static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
+	private static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
+	private static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
+	private static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET; // Change this inside apikey.properties
 
 
 	// Landing page to indicate the OAuth flow worked in case Chrome for Android 25+ blocks navigation back to the app.
-	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
+	private static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
 
 	// See https://developer.chrome.com/multidevice/android/intents
-	public static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
+	private static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
 
 	public TwitterClient(Context context) {
 		super(context, REST_API_INSTANCE,
@@ -75,16 +74,11 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, "", handler);
 	}
 
-	public void unlikeTweet(String tweetId, JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("favorites/destroy.json"); // FIXME: use one endpoint
-		// Can specify query string params directly or through RequestParams.
-		RequestParams params = new RequestParams();
-		params.put("id", tweetId);
-		client.post(apiUrl, params, "", handler);
-	}
+	public void processLike(Boolean like, String tweetId, JsonHttpResponseHandler handler){
+		// get url corresponding to like or unlike respectively
+		String api =  like? "favorites/create.json": "favorites/destroy.json";
+		String apiUrl = getApiUrl(api);
 
-	public void likeTweet(String tweetId, JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("favorites/create.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);
@@ -110,13 +104,4 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("tweet_id", tweetId);
 		client.post(apiUrl, params, "", handler);
 	}
-
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
 }

@@ -26,10 +26,9 @@ import java.util.List;
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     public static final String TWEET = "TWEET";
     public static final int PROFILE_RADIUS = 80;
-    public static final int BODY_IMAGE_RADIUS = 60;
 
-    Context context;
-    List<Tweet> tweets;
+    private Context context;
+    private List<Tweet> tweets;
 
     // Define listener member variable
     private OnItemClickListener listener;
@@ -96,23 +95,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    // Add a list of items -- change to type used
-    public void addAll(List<Tweet> list) {
-        tweets.addAll(list);
-        notifyDataSetChanged();
-    }
-
     // Define a viewholder
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivProfileImage;
-        ImageView ivImage;
-        TextView tvBody;
-        TextView tvScreenName;
-        TextView created_at;
-        TextView likeCount;
-        ToggleButton likedBtn;
-        TextView retweetCount;
-        ToggleButton retweetBtn;
+        private ImageView ivProfileImage;
+        private ImageView ivImage;
+        private TextView tvBody;
+        private TextView tvScreenName;
+        private TextView created_at;
+        private TextView likeCount;
+        private ToggleButton likedBtn;
+        private TextView retweetCount;
+        private ToggleButton retweetBtn;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener clickListener)  {
             super(itemView);

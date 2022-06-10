@@ -22,23 +22,20 @@ import com.codepath.apps.restclienttemplate.models.Tweet;
 import org.parceler.Parcels;
 
 public class TweetDetailsActivity extends AppCompatActivity {
-    Tweet tweet;
-
-    ImageView ivProfileImage;
-    ImageView ivImage;
-    TextView tvBody;
-    TextView tvScreenName;
-    TextView created_at;
-
-    TextView likeCount;
-    ToggleButton likedBtn;
-    TextView retweetCount;
-    ToggleButton retweetBtn;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ImageView ivProfileImage;
+        ImageView ivImage;
+        TextView tvBody;
+        TextView tvScreenName;
+        TextView created_at;
+
+        TextView likeCount;
+        ToggleButton likedBtn;
+        TextView retweetCount;
+        ToggleButton retweetBtn;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_details);
 
@@ -56,9 +53,9 @@ public class TweetDetailsActivity extends AppCompatActivity {
         retweetBtn = findViewById(R.id.retweetBtn);
 
         // Extract tweet details from the intent
-        tweet = Parcels.unwrap(getIntent().getParcelableExtra(TweetsAdapter.TWEET));
+        Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra(TweetsAdapter.TWEET));
 
-        // feel in the info
+        // fill in the info
         tvBody.setText(tweet.getBody());
         tvScreenName.setText(tweet.getUser().getScreenName());
         created_at.setText(tweet.getCreatedAt());

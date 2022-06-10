@@ -32,7 +32,7 @@ public class Tweet {
     private boolean liked;
     private String likeCount;
     private boolean retweeted;
-    public String retweetCount;
+    private String retweetCount;
 
     // empty constructor needed by the Parceler library
     public Tweet() {}
@@ -93,7 +93,6 @@ public class Tweet {
                     return diff / DAY_MILLIS + " d";
                 }
             } catch (ParseException e) {
-                Log.i(TAG, "getRelativeTimeAgo failed");
                 e.printStackTrace();
             }
         }

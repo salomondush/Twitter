@@ -34,7 +34,6 @@ import okhttp3.Headers;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    public static final String TAG = "TimeLineActivity";
     public static final int RESTRICTED_COUNT = 0;
     public static final int INCREMENT = 1;
     private final int REQUEST_CODE = 20;
@@ -105,12 +104,12 @@ public class TimelineActivity extends AppCompatActivity {
                          tweet.setLiked(false);
                          tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
                                  numLikes-INCREMENT: --numLikes));
-                         setTweetUnliked(tweet.getTweetId());
+                         handleLikeAction(false, tweet.getTweetId());
                      } else if (!tweet.isLiked()) {
                          tweet.setLiked(true);
                          tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
                                  numLikes+INCREMENT: ++numLikes));
-                         setTweetLiked(tweet.getTweetId());
+                         handleLikeAction(true, tweet.getTweetId());
                      }
 
                      tweets.add(position, tweet);
@@ -209,31 +208,35 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "onSuccess!" + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     tweets.addAll(Tweet.fromJsonArray(jsonArray));
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e){
-                    Log.e(TAG, "Json exception", e);
+                    Toast.makeText(
+                            TimelineActivity.this,
+                            e.toString(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-//                Log.i(TAG, BuildConfig.CONSUMER_KEY);
-                Log.e(TAG, "onFailure"+ response, throwable);
+                Toast.makeText(
+                        TimelineActivity.this,
+                        "Error! " + throwable.toString(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setTweetLiked(String id){
-        client.likeTweet(id, new JsonHttpResponseHandler() {
+    private void handleLikeAction(Boolean like, String id){
+        client.processLike(like, id, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Toast.makeText(
                         TimelineActivity.this,
-                        "Liked!",
+                        like? "Liked!": "Unliked!",
                         Toast.LENGTH_SHORT).show();
             }
 
@@ -243,55 +246,10 @@ public class TimelineActivity extends AppCompatActivity {
                         TimelineActivity.this,
                         "Error!",
                         Toast.LENGTH_SHORT).show();
-
-                Log.i(TAG, "error1: " + throwable.toString());
             }
         });
     }
 
-    private void setTweetUnliked(String id){
-        client.unlikeTweet(id, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Toast.makeText(
-                        TimelineActivity.this,
-                        "Unliked!",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Toast.makeText(
-                        TimelineActivity.this,
-                        "Error!",
-                        Toast.LENGTH_SHORT).show();
-
-                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
-            }
-        });
-    }
-
-    private void setRetweeted(String id){
-        client.unlikeTweet(id, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Toast.makeText(
-                        TimelineActivity.this,
-                        "Unliked!",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Toast.makeText(
-                        TimelineActivity.this,
-                        "Error!",
-                        Toast.LENGTH_SHORT).show();
-
-                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
-            }
-        });
-    }
 
     private void handleRetweetAction(Boolean  retweet, String tweetId){
         client.processRetweet(retweet, tweetId, new JsonHttpResponseHandler() {
@@ -309,8 +267,6 @@ public class TimelineActivity extends AppCompatActivity {
                         TimelineActivity.this,
                         "Error!",
                         Toast.LENGTH_SHORT).show();
-
-                Log.i(TAG, "error2: " + throwable.toString() + " " + response);
             }
         });
     }
