@@ -3,17 +3,21 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.parceler.Parcels;
 
 public class TweetDetailsActivity extends AppCompatActivity {
+
+    ActivityTweetDetailsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +32,30 @@ public class TweetDetailsActivity extends AppCompatActivity {
         TextView retweetCount;
         ToggleButton retweetBtn;
 
+        ImageView isVerified;
+        TextView userName;
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_details);
+        binding = ActivityTweetDetailsBinding.inflate(getLayoutInflater());
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
 
 
         // fetch views
-        ivProfileImage = findViewById(R.id.ivProfileImage);
-        ivImage = findViewById(R.id.ivImage);
-        tvBody = findViewById(R.id.tvBody);
-        tvScreenName = findViewById(R.id.tvScreenName);
-        created_at = findViewById(R.id.createdAt);
+        ivProfileImage = binding.ivProfileImage;
+        ivImage = binding.ivImage;
+        tvBody = binding.tvBody;
+        tvScreenName = binding.tvScreenName;
+        created_at = binding.createdAt;
 
-        likeCount = findViewById(R.id.likesCount);
-        likedBtn = findViewById(R.id.likeBtn);
-        retweetCount = findViewById(R.id.retweetsCount);
-        retweetBtn = findViewById(R.id.retweetBtn);
+        likeCount = binding.likesCount;
+        likedBtn = binding.likeBtn;
+        retweetCount = binding.retweetsCount;
+        retweetBtn = binding.retweetBtn;
+
+        isVerified = binding.isVerified;
+        userName = binding.userName;
 
         // Extract tweet details from the intent
         Tweet tweet = Parcels.unwrap(getIntent().getParcelableExtra(TweetsAdapter.TWEET));
@@ -55,6 +68,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
         likedBtn.setChecked(tweet.isLiked());
         retweetCount.setText(tweet.getRetweetCount());
         retweetBtn.setChecked(tweet.isRetweeted());
+        userName.setText(tweet.getUser().getUserName());
+        isVerified.setVisibility(tweet.getUser().isVerified() ? View.VISIBLE : View.GONE);
 
         // loading the images with Glide
         Glide.with(this).load(tweet.getUser()
