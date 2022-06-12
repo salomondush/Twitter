@@ -4,7 +4,13 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.FontRes;
 import androidx.annotation.RequiresApi;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Parcel
+@Entity(foreignKeys=@ForeignKey(entity = User.class, parentColumns = "id", childColumns = "userId"))
 public class Tweet {
     private static final String TAG = "Tweet";
     private static final int SECOND_MILLIS = 1000;
@@ -24,14 +31,35 @@ public class Tweet {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    @PrimaryKey
+    @ColumnInfo
+    private long id;
+
+    @ColumnInfo
     private String body;
+
+    @ColumnInfo
     private String createdAt;
-    private User user;
+
+    @ColumnInfo
+    private long userId;
+
+    @Ignore
+    private User user; // @fixme: this is a temporary solution
+
+    @ColumnInfo
     private String mediaUrl;
-    private String tweetId;
+
+    @ColumnInfo
     private boolean liked;
+
+    @ColumnInfo
     private String likeCount;
+
+    @ColumnInfo
     private boolean retweeted;
+
+    @ColumnInfo
     private String retweetCount;
 
     // empty constructor needed by the Parceler library
@@ -46,7 +74,10 @@ public class Tweet {
         }
         tweet.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-        tweet.tweetId = jsonObject.getString("id_str");
+
+        tweet.userId = tweet.user.getId();
+
+        tweet.id = jsonObject.getLong("id");
         tweet.liked = jsonObject.getBoolean("favorited");
         tweet.likeCount = jsonObject.getString("favorite_count");
 
@@ -108,6 +139,10 @@ public class Tweet {
         return tweets;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void setLiked(boolean liked) {
         this.liked = liked;
     }
@@ -124,8 +159,32 @@ public class Tweet {
         this.retweetCount = retweetCount;
     }
 
+    public void setId(long tweetId) {
+        this.id = tweetId;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
     public boolean isRetweeted() {
         return retweeted;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public String getRetweetCount() {
@@ -148,8 +207,8 @@ public class Tweet {
         return mediaUrl;
     }
 
-    public String getTweetId() {
-        return tweetId;
+    public long getId() {
+        return id;
     }
 
     public boolean isLiked() {

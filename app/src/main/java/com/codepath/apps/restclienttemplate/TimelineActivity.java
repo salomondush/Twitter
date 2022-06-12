@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -21,6 +22,9 @@ import android.widget.ToggleButton;
 
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDao;
+import com.codepath.apps.restclienttemplate.models.TweetWithUser;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -39,6 +43,7 @@ public class TimelineActivity extends AppCompatActivity {
     public static final int INCREMENT = 1;
     private final int REQUEST_CODE = 20;
 
+    TweetDao tweetDao;
     TwitterClient client; // fixme: make these private
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -66,6 +71,8 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_red_light);
 
         client = TwitterApp.getRestClient(this);
+        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
+
 
         // find the recycler view
         rvTweets = binding.rvTweets;
@@ -104,12 +111,12 @@ public class TimelineActivity extends AppCompatActivity {
                          tweet.setLiked(false);
                          tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
                                  numLikes-INCREMENT: --numLikes));
-                         handleLikeAction(false, tweet.getTweetId());
+                         handleLikeAction(false, Long.toString(tweet.getId()));
                      } else if (!tweet.isLiked()) {
                          tweet.setLiked(true);
                          tweet.setLikeCount(String.valueOf(numLikes == RESTRICTED_COUNT?
                                  numLikes+INCREMENT: ++numLikes));
-                         handleLikeAction(true, tweet.getTweetId());
+                         handleLikeAction(true, Long.toString(tweet.getId()));
                      }
 
                      tweets.add(position, tweet);
@@ -131,12 +138,12 @@ public class TimelineActivity extends AppCompatActivity {
                         tweet.setRetweeted(false);
                         tweet.setRetweetCount(String.valueOf(numRetweets == RESTRICTED_COUNT?
                                 numRetweets-INCREMENT:--numRetweets));
-                        handleRetweetAction(false, tweet.getTweetId());
+                        handleRetweetAction(false, Long.toString(tweet.getId()));
                     } else if (!tweet.isRetweeted()) {
                         tweet.setRetweeted(true);
                         tweet.setRetweetCount(String.valueOf(numRetweets == RESTRICTED_COUNT?
                                 numRetweets+INCREMENT:++numRetweets));
-                        handleRetweetAction(true, tweet.getTweetId());
+                        handleRetweetAction(true, Long.toString(tweet.getId()));
                     }
 
                     tweets.add(position, tweet);
@@ -148,6 +155,23 @@ public class TimelineActivity extends AppCompatActivity {
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
+
+
+        // Query for existing tweets in the Db
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("TimelineActivity", "fetching tweets from db");
+                List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
+                tweetDao.recentItems();
+                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
+
+                // clear adapter and update with new db data
+                adapter.clear();
+                tweets.addAll(tweetsFromDB);
+            }
+        });
+
         populateHomeTimeline();
     }
 
@@ -210,22 +234,33 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray jsonArray = json.jsonArray;
                 try {
-                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    List<Tweet> tweetsFromNetwork = Tweet.fromJsonArray(jsonArray);
+                    tweets.addAll(tweetsFromNetwork);
                     adapter.notifyDataSetChanged();
+
+                    // Query for existing tweets in the Db
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("TimelineActivity", "saving data to db");
+                            // insert users first for the foreign key connection to work
+                            List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0])); //
+                            // converting List to array -- the parameter of newly created array
+                            // that we passed in is auto resizable
+
+                            // insert tweets next
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
                 } catch (JSONException e){
-                    Toast.makeText(
-                            TimelineActivity.this,
-                            e.toString(),
-                            Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Toast.makeText(
-                        TimelineActivity.this,
-                        "Error! " + throwable.toString(),
-                        Toast.LENGTH_SHORT).show();
+                throwable.printStackTrace();
             }
         });
     }
